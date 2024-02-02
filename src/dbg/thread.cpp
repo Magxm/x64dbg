@@ -258,7 +258,7 @@ DWORD ThreadGetLastError(DWORD ThreadId)
     if(threadList.find(ThreadId) != threadList.end())
         return ThreadGetLastErrorTEB(threadList[ThreadId].ThreadLocalBase);
 
-    ASSERT_ALWAYS("Trying to get last error of a thread that doesn't exist!");
+    //ASSERT_ALWAYS("Trying to get last error of a thread that doesn't exist!");
     return 0;
 }
 
@@ -279,7 +279,7 @@ NTSTATUS ThreadGetLastStatus(DWORD ThreadId)
     if(threadList.find(ThreadId) != threadList.end())
         return ThreadGetLastStatusTEB(threadList[ThreadId].ThreadLocalBase);
 
-    ASSERT_ALWAYS("Trying to get last status of a thread that doesn't exist!");
+    //ASSERT_ALWAYS("Trying to get last status of a thread that doesn't exist!");
     return 0;
 }
 

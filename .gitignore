@@ -82,3 +82,9 @@ My Amplifier Results - */
 My Inspector Results - */
 /bin/x96dbg.ini
 /src/gui/msvc_make.bat
+*.api
+*.dp64
+*.exp
+*.lib
+*.ini
+*.log

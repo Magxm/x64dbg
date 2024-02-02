@@ -94,4 +94,12 @@ copy bin\*.pdb %RELEASEDIR%\pdb\
 copy bin\x32\*.pdb %RELEASEDIR%\pdb\x32\
 copy bin\x64\*.pdb %RELEASEDIR%\pdb\x64\
 
+mkdir %RELEASEDIR%\release\x64\plugins\
+xcopy plugins\* %RELEASEDIR%\release\x64\plugins\ /S /Y /I
+cd %RELEASEDIR%\release\x64
+call windeployqt.exe --force x64gui.dll
+
+
+
+
 exit 0

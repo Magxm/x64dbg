@@ -62,24 +62,40 @@ static bool cbDisableAllBreakpoints(const BREAKPOINT* bp)
 }
 
 // Software breakpoints
-bool cbDebugSetBPX(int argc, char* argv[]) //bp addr [,name [,type]]
+bool cbDebugSetBPX(int argc, char* argv[]) //bp addr [,name [,type[, refreshGUI]]
 {
     if(IsArgumentsLessThan(argc, 2))
         return false;
+
     char argaddr[deflen] = "";
     strcpy_s(argaddr, argv[1]);
     char argname[deflen] = "";
     if(argc > 2)
         strcpy_s(argname, argv[2]);
+
     char argtype[deflen] = "";
     bool has_arg2 = argc > 3;
     if(has_arg2)
         strcpy_s(argtype, argv[3]);
+
+
     if(!has_arg2 && (scmp(argname, "ss") || scmp(argname, "long") || scmp(argname, "ud2")))
     {
         strcpy_s(argtype, argname);
         *argname = 0;
     }
+
+    bool has_arg3 = argc > 4;
+    bool refreshGUI = true;
+    if (has_arg3)
+    {
+        char reloadGUIText[deflen]  = "";
+        strcpy_s(reloadGUIText, argv[4]);
+        if (scmp(reloadGUIText, "0") || scmp(reloadGUIText, "false"))
+            refreshGUI = false;
+    }
+        
+
     _strlwr_s(argtype);
     duint addr = 0;
     if(!valfromstring(argaddr, &addr))
@@ -136,11 +152,15 @@ bool cbDebugSetBPX(int argc, char* argv[]) //bp addr [,name [,type]]
             dprintf(QT_TRANSLATE_NOOP("DBG", "Error handling invalid breakpoint at %p! (bpdel)\n"), addr);
         return false;
     }
-    GuiUpdateAllViews();
+
+    if (refreshGUI)
+        GuiUpdateAllViews();
+
     if(bpname)
         dprintf(QT_TRANSLATE_NOOP("DBG", "Breakpoint at %p (%s) set!\n"), addr, bpname);
     else
         dprintf(QT_TRANSLATE_NOOP("DBG", "Breakpoint at %p set!\n"), addr);
+
     return true;
 }
 
@@ -696,6 +716,7 @@ bool cbDebugSetMemoryBpx(int argc, char* argv[])
     char arg3[deflen] = "";
     if(argc > 3)
         strcpy_s(arg3, argv[3]);
+
     if(argc > 2)
     {
         if(*argv[2] == '1')
@@ -751,6 +772,7 @@ bool cbDebugSetMemoryBpx(int argc, char* argv[])
         return false;
     }
     dprintf(QT_TRANSLATE_NOOP("DBG", "Memory breakpoint at %p set!\n"), addr);
+
     GuiUpdateAllViews();
     return true;
 }
@@ -1159,6 +1181,7 @@ bool cbDebugSetExceptionBPX(int argc, char* argv[])
 {
     if(IsArgumentsLessThan(argc, 2))
         return false;
+
     duint ExceptionCode;
     if(!valfromstring(argv[1], &ExceptionCode))
     {
@@ -1214,6 +1237,7 @@ bool cbDebugSetExceptionBPX(int argc, char* argv[])
         dputs(QT_TRANSLATE_NOOP("DBG", "Failed to set exception breakpoint! (BpNew)"));
         return false;
     }
+
     DebugUpdateBreakpointsViewAsync();
     return true;
 }
